@@ -513,7 +513,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
 
     const double epsilon = 0.0001;
 
-    / Check bounds with a small tolerance
+    // Check bounds with a small tolerance
     if (_upperBoundAngle != null && _turningAngle < (_upperBoundAngle! - epsilon)) {
       _turningAngle = _upperBoundAngle!;
     } else if (_lowerBoundAngel != null && _turningAngle > (_lowerBoundAngel! + epsilon)) {
