@@ -226,6 +226,8 @@ class _Dial extends StatefulWidget {
 }
 
 class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
+  late final int? _upperBoundValue;
+  late final int? _lowerBoundValue;
   late final double? _upperBoundAngle;
   late final double? _lowerBoundAngel;
 
@@ -261,6 +263,16 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
     _lowerBoundAngel = widget.lowerBound != null
         ? _kPiByTwo - _turningAngleFactor(widget.lowerBound) * _kTwoPi
         : null;
+
+
+    // Calculate bound values once
+    _upperBoundValue = widget.upperBound != null 
+        ? _getDurationInBaseUnits(widget.upperBound!, widget.baseUnit)
+        : null;
+    _lowerBoundValue = widget.lowerBound != null 
+        ? _getDurationInBaseUnits(widget.lowerBound!, widget.baseUnit)
+        : null;
+
   }
 
   late ThemeData themeData;
@@ -511,12 +523,15 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
       _turningAngle = _turningAngle + (newTheta - oldTheta);
     }
 
-    const double epsilon = 0.0001;
-
-    // Check bounds with a small tolerance
-    if (_upperBoundAngle != null && _turningAngle < (_upperBoundAngle! - epsilon)) {
+    // Check both value-based and angle-based bounds
+    Duration currentDuration = _angleToDuration(_turningAngle);
+    int currentValue = _getDurationInBaseUnits(currentDuration, widget.baseUnit);
+    
+    if (_upperBoundValue != null && currentValue > _upperBoundValue!) {
       _turningAngle = _upperBoundAngle!;
-    } else if (_lowerBoundAngel != null && _turningAngle > (_lowerBoundAngel! + epsilon)) {
+    }
+    
+    if (_lowerBoundValue != null && currentValue < _lowerBoundValue!) {
       _turningAngle = _lowerBoundAngel!;
     }
   }
