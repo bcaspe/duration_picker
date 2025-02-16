@@ -721,8 +721,8 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
   }
 
   // Helper method to get duration in base units
-  int _getDurationInBaseUnits(Duration duration, BaseUnit baseUnit) {
-    switch (baseUnit) {
+  int _getDurationInBaseUnits(Duration duration) {
+    switch (widget.baseUnit) {
       case BaseUnit.millisecond:
         return duration.inMilliseconds;
       case BaseUnit.second:
@@ -737,7 +737,7 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
   String getBaseUnitString() {
     final localization = DurationPickerLocalizations.of(context);
 
-    switch (baseUnit) {
+    switch (widget.baseUnit) {
       case BaseUnit.millisecond:
         return localization.baseUnitMillisecond;
       case BaseUnit.second:
