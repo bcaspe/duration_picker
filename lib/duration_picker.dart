@@ -584,9 +584,31 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
     }
 
     final labels = <TextPainter>[];
+    final lowerBoundValue = widget.lowerBound != null
+        ? _getDurationInBaseUnits(widget.lowerBound!, widget.baseUnit)
+        : null;
+    final upperBoundValue = widget.upperBound != null
+        ? _getDurationInBaseUnits(widget.upperBound!, widget.baseUnit)
+        : null;
+
     for (final duration in baseUnitMarkerValues) {
+      bool isDisabled = false;
+      if (lowerBoundValue != null) {
+        isDisabled = isDisabled ||
+            _getDurationInBaseUnits(duration, widget.baseUnit) <
+                lowerBoundValue;
+      }
+      if (upperBoundValue != null) {
+        isDisabled = isDisabled ||
+            _getDurationInBaseUnits(duration, widget.baseUnit) >
+                upperBoundValue;
+      }
       final painter = TextPainter(
-        text: TextSpan(style: style, text: _durationToBaseUnitString(duration)),
+        text: TextSpan(
+            style: style?.copyWith(
+              color: isDisabled ? Colors.grey.withOpacity(0.5) : style.color,
+            ),
+            text: _durationToBaseUnitString(duration)),
         textDirection: TextDirection.ltr,
       )..layout();
       labels.add(painter);
@@ -698,6 +720,35 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
     Navigator.pop(context, _selectedDuration);
   }
 
+  // Helper method to get duration in base units
+  int _getDurationInBaseUnits(Duration duration, BaseUnit baseUnit) {
+    switch (baseUnit) {
+      case BaseUnit.millisecond:
+        return duration.inMilliseconds;
+      case BaseUnit.second:
+        return duration.inSeconds;
+      case BaseUnit.minute:
+        return duration.inMinutes;
+      case BaseUnit.hour:
+        return duration.inHours;
+    }
+  }
+
+  String getBaseUnitString() {
+    final localization = DurationPickerLocalizations.of(context);
+
+    switch (baseUnit) {
+      case BaseUnit.millisecond:
+        return localization.baseUnitMillisecond;
+      case BaseUnit.second:
+        return localization.baseUnitSecond;
+      case BaseUnit.minute:
+        return localization.baseUnitMinute;
+      case BaseUnit.hour:
+        return localization.baseUnitHour;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
@@ -712,6 +763,8 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
           duration: _selectedDuration!,
           onChanged: _handleTimeChanged,
           baseUnit: widget.baseUnit,
+          lowerBound: widget.lowerBound,
+          upperBound: widget.upperBound,
         ),
       ),
     );
@@ -720,6 +773,19 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
       data: ButtonBarTheme.of(context),
       child: ButtonBar(
         children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.lowerBound != null)
+                Text(
+                    'Min: ${_getDurationInBaseUnits(widget.lowerBound!)} ${getBaseUnitString()}'),
+              if (widget.upperBound != null)
+                Text(
+                    'Max: ${_getDurationInBaseUnits(widget.upperBound!)} ${getBaseUnitString()}'),
+            ],
+          ),
+          const Spacer(),
           TextButton(
             onPressed: _handleCancel,
             child: Text(localizations.cancelButtonLabel),
