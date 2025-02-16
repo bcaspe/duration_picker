@@ -790,6 +790,7 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
     final Widget actions = ButtonBarTheme(
       data: ButtonBarTheme.of(context),
       child: ButtonBar(
+        alignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -803,14 +804,17 @@ class DurationPickerDialogState extends State<DurationPickerDialog> {
                     'Max: ${_getDurationInBaseUnits(widget.upperBound!)} ${getBaseUnitString()}'),
             ],
           ),
-          const Spacer(),
-          TextButton(
-            onPressed: _handleCancel,
-            child: Text(localizations.cancelButtonLabel),
-          ),
-          TextButton(
-            onPressed: _handleOk,
-            child: Text(localizations.okButtonLabel),
+          Row(
+            children: [
+              TextButton(
+                onPressed: _handleCancel,
+                child: Text(localizations.cancelButtonLabel),
+              ),
+              TextButton(
+                onPressed: _handleOk,
+                child: Text(localizations.okButtonLabel),
+              ),
+            ],
           ),
         ],
       ),
