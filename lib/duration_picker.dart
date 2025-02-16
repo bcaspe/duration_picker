@@ -370,7 +370,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
           duration ?? widget.duration,
           widget.baseUnit,
         ) /
-        _getBaseUnitToSecondaryUnitFactor(widget.baseUnit);
+        _getBaseUnitToSecondaryUnitFactor(widget.baseUnit).toDouble();
   }
 
   Duration _getTimeForTheta(double theta) {
@@ -511,9 +511,12 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
       _turningAngle = _turningAngle + (newTheta - oldTheta);
     }
 
-    if (_upperBoundAngle != null && _turningAngle <= _upperBoundAngle!) {
+    const double epsilon = 0.0001;
+
+    / Check bounds with a small tolerance
+    if (_upperBoundAngle != null && _turningAngle < (_upperBoundAngle! - epsilon)) {
       _turningAngle = _upperBoundAngle!;
-    } else if (_lowerBoundAngel != null && _turningAngle >= _lowerBoundAngel!) {
+    } else if (_lowerBoundAngel != null && _turningAngle > (_lowerBoundAngel! + epsilon)) {
       _turningAngle = _lowerBoundAngel!;
     }
   }
