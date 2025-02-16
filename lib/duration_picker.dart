@@ -511,9 +511,9 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
       _turningAngle = _turningAngle + (newTheta - oldTheta);
     }
 
-    if (_upperBoundAngle != null && _turningAngle < _upperBoundAngle!) {
+    if (_upperBoundAngle != null && _turningAngle <= _upperBoundAngle!) {
       _turningAngle = _upperBoundAngle!;
-    } else if (_lowerBoundAngel != null && _turningAngle > _lowerBoundAngel!) {
+    } else if (_lowerBoundAngel != null && _turningAngle >= _lowerBoundAngel!) {
       _turningAngle = _lowerBoundAngel!;
     }
   }
